@@ -105,25 +105,29 @@ export function Component() {
     <div>
       <div className="relative z-10 container mx-auto px-2 py-10">
         <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8 space-y-3">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E1FF2F]/10 border border-[#E1FF2F]/20 backdrop-blur-sm mb-4">
-              <span className="text-sm font-medium text-[#E1FF2F]">
-                DIFLEN GLOBAL 2025
-              </span>
+          <div className="text-center">
+            <div className="inline-flex items-center">
+              <img
+                className="h-32 sm:h-44 -mt-18"
+                src="/logo-diflen-global-25.png"
+                alt="diflen global 25"
+              />
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-balance tracking-tight leading-none">
-              <span className="bg-linear-to-tr from-[#FFFFFF] to-[#E1FF2F] bg-clip-text text-transparent animate-gradient">
-                SALA
-              </span>
-              <br />
-              <span className="text-[#E1FF2F]">PROFÉTICA</span>
-            </h1>
+            <div className="text-center mb-5 sm:mb-8 space-y-3 -mt-3 sm:-mt-5">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-balance tracking-tight leading-none">
+                <span className="bg-linear-to-tr from-[#FFFFFF] to-[#E1FF2F] bg-clip-text text-transparent animate-gradient">
+                  SALA
+                </span>
+                <br />
+                <span className="text-[#E1FF2F]">PROFÉTICA</span>
+              </h1>
 
-            <p className="text-xl md:text-2xl text-white/80 font-light text-pretty max-w-lg mx-auto">
-              Descubra seu horário na sala profética inserindo o código do seu
-              comprovante abaixo.
-            </p>
+              <p className="text-xl md:text-2xl text-white/80 font-light text-pretty max-w-lg mx-auto">
+                Descubra seu horário na sala profética inserindo o código do seu
+                comprovante abaixo.
+              </p>
+            </div>
           </div>
 
           {/* Formulário de entrada */}
@@ -133,10 +137,10 @@ export function Component() {
 
             <div className="relative">
               <CardHeader className="space-y-1 pb-6">
-                <CardTitle className="text-3xl md:text-4xl font-bold text-[#E1FF2F]">
+                <CardTitle className=" text-2xl sm:text-3xl md:text-4xl font-bold text-[#E1FF2F]">
                   Código de Inscrição
                 </CardTitle>
-                <CardDescription className="text-lg text-white">
+                <CardDescription className="text-md sm:text-lg text-white">
                   Digite os 9 caracteres do seu código de inscrição que está no
                   seu comprovante de inscrição.
                 </CardDescription>
@@ -263,7 +267,7 @@ export function Component() {
 
                   <Button
                     type="submit"
-                    className="w-full h-14 sm:h-16 text-xl font-black rounded-2xl relative overflow-hidden group/btn transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full h-14 sm:h-16 text-lg sm:text-xl font-black rounded-2xl relative overflow-hidden group/btn transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       background:
                         "linear-gradient(135deg, #E1FF2F 0%, #B8FF00 100%)",

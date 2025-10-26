@@ -16,7 +16,12 @@ const PrivateLayout = () => {
 
   if (loadingUserAuth || !user) {
     return (
-      <div className="flex items-center justify-center h-screen text-white">
+      <div className="flex flex-col items-center justify-center h-screen text-white">
+        <img
+          className="h-32 sm:h-44 -mt-8"
+          src="/logo-diflen-global-25.png"
+          alt="diflen global 25"
+        />
         <Spinner className="size-10 text-[#E1FF2F]" />
       </div>
     );
