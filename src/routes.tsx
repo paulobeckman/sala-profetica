@@ -1,10 +1,16 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import PrivateLayout from "./layouts/Private";
+import PublicLayout from "./layouts/Public";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    lazy: () => import("@/pages/Home"),
+    element: <PublicLayout />,
+    children: [
+      {
+        path: "/",
+        lazy: () => import("@/pages/Home"),
+      },
+    ],
   },
   {
     element: <PrivateLayout />,
@@ -17,7 +23,7 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <div>Página não encontrada</div>,
+    element: <Navigate to="/horario" replace />,
   },
 ]);
 

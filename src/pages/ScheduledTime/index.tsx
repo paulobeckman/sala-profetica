@@ -10,9 +10,12 @@ import { useFirestoreGetDocument } from "@/utils/firestore";
 import type { ParticipantType } from "@/interface/paticipant";
 import { useAuth } from "@/hooks/use-auth";
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 
 export function Component() {
   const { user } = useAuth();
+  const { SignOut } = useAuth();
+
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("pt-BR", {
       weekday: "long",
@@ -196,6 +199,16 @@ export function Component() {
               style={{ animationDelay: "0.4s" }}
             />
           </div>
+        </div>
+
+        <div className="flex justify-center mt-2">
+          <Button
+            variant="ghost"
+            className="text-[#E1FF2F] text-md"
+            onClick={SignOut}
+          >
+            Sair
+          </Button>
         </div>
       </div>
       <style>{`

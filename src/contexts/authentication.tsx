@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: ProviderProps) => {
 
   const SignOut = useCallback(async () => {
     await signOut(auth);
-    localStorage.removeItem("@groupId");
+    localStorage.removeItem("@registrationCode");
     setUser(undefined);
   }, []);
 
