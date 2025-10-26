@@ -9,11 +9,11 @@ const PrivateLayout = () => {
 
   useEffect(() => {
     if (!user && !loadingUserAuth) {
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
     }
   }, [loadingUserAuth, navigate, user]);
 
-  if (loadingUserAuth) {
+  if (loadingUserAuth || !user) {
     return (
       <div className="flex items-center justify-center h-screen">
         Carregando...

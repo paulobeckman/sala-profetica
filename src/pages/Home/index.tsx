@@ -1,5 +1,7 @@
+import RegistrationSystem from "./RegistrationSystem";
+
 export function Component() {
-  return <div>Home</div>;
+  return <RegistrationSystem />;
 }
 
 Component.displayName = "Home";
