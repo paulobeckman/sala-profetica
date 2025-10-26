@@ -64,6 +64,7 @@ export const AuthProvider = ({ children }: ProviderProps) => {
 
   const SignIn = useCallback(
     async ({ registrationCode }: SignInCredentials): Promise<void> => {
+      setLoadingUserAuth(true);
       const collectionRef = collection(firestore, "participant");
       const queryUser = query(
         collectionRef,
@@ -88,6 +89,7 @@ export const AuthProvider = ({ children }: ProviderProps) => {
           });
         }
       }
+      setLoadingUserAuth(false);
     },
     []
   );

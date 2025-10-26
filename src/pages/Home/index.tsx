@@ -77,6 +77,31 @@ export function Component() {
     }
   };
 
+  const handleFocus = (index: number) => {
+    const el = inputRefs.current[index];
+    if (!el) return;
+
+    // Scroll the input into view smoothly and then ensure it has focus.
+    // Using block: 'center' to center the element in the viewport similar to keyboard-driven focus.
+    try {
+      el.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "start",
+      });
+    } catch {
+      // fallback for older browsers
+      el.scrollIntoView();
+    }
+
+    // Ensure the input is focused (click will normally focus it, but this guarantees programmatic calls behave the same)
+    try {
+      el.focus();
+    } catch {
+      /* ignore */
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -164,6 +189,7 @@ export function Component() {
                             handleInputChange(index, e.target.value)
                           }
                           onKeyDown={(e) => handleKeyDown(index, e)}
+                          onFocus={() => handleFocus(index)}
                           className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
                           style={{
                             backgroundColor: code[index]
@@ -200,6 +226,7 @@ export function Component() {
                             handleInputChange(index, e.target.value)
                           }
                           onKeyDown={(e) => handleKeyDown(index, e)}
+                          onFocus={() => handleFocus(index)}
                           className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
                           style={{
                             backgroundColor: code[index]
@@ -236,6 +263,7 @@ export function Component() {
                             handleInputChange(index, e.target.value)
                           }
                           onKeyDown={(e) => handleKeyDown(index, e)}
+                          onFocus={() => handleFocus(index)}
                           className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
                           style={{
                             backgroundColor: code[index]
