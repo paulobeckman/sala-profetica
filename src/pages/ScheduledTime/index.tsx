@@ -9,6 +9,7 @@ import {
 import { useFirestoreGetDocument } from "@/utils/firestore";
 import type { ParticipantType } from "@/interface/paticipant";
 import { useAuth } from "@/hooks/use-auth";
+import { Spinner } from "@/components/ui/spinner";
 
 export function Component() {
   const { user } = useAuth();
@@ -32,63 +33,16 @@ export function Component() {
   );
 
   if (!participant) {
-    return null;
+    return (
+      <div className="flex items-center justify-center h-screen text-white">
+        <Spinner className="size-10 text-[#E1FF2F]" />
+      </div>
+    );
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#003280]">
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Gradiente base */}
-        <div className="absolute inset-0 bg-linear-to-br from-[#003280] via-[#0047b3] to-[#003280]" />
-
-        {/* Mesh gradient animado */}
-        <div className="absolute inset-0 opacity-40">
-          <div
-            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] animate-float"
-            style={{
-              background:
-                "radial-gradient(circle, #E1FF2F 0%, transparent 70%)",
-              animation: "float 20s ease-in-out infinite",
-            }}
-          />
-          <div
-            className="absolute top-1/4 right-0 w-[500px] h-[500px] rounded-full blur-[100px] animate-float-delayed"
-            style={{
-              background:
-                "radial-gradient(circle, #00FFFF 0%, transparent 70%)",
-              animation: "float 15s ease-in-out infinite 5s",
-            }}
-          />
-          <div
-            className="absolute bottom-0 left-1/3 w-[700px] h-[700px] rounded-full blur-[130px] animate-float-slow"
-            style={{
-              background:
-                "radial-gradient(circle, #E1FF2F 0%, transparent 70%)",
-              animation: "float 25s ease-in-out infinite 10s",
-            }}
-          />
-          <div
-            className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] rounded-full blur-[90px] animate-pulse-slow"
-            style={{
-              background:
-                "radial-gradient(circle, #FF00FF 0%, transparent 70%)",
-              animation: "pulse-slow 8s ease-in-out infinite",
-            }}
-          />
-        </div>
-
-        {/* Grid overlay sutil */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(#E1FF2F 1px, transparent 1px), linear-gradient(90deg, #E1FF2F 1px, transparent 1px)`,
-            backgroundSize: "50px 50px",
-          }}
-        />
-      </div>
-
-      {/* Conteúdo principal */}
-      <div className="relative z-10 container mx-auto px-2 py-10">
+    <div>
+      <div>
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8 space-y-3">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E1FF2F]/10 border border-[#E1FF2F]/20 backdrop-blur-sm mb-4">
@@ -144,8 +98,8 @@ export function Component() {
                     {participant.name}
                   </span>
                   <p>
-                    abaixo está o seu horário para a Sala Profética não perca. E
-                    desde já prepare-se em oração para esse momento!
+                    abaixo está o seu horário para a Sala Profética. Não perca!
+                    Desde já, prepare-se em oração para esse momento.
                   </p>
                 </CardDescription>
               </CardHeader>
@@ -240,7 +194,6 @@ export function Component() {
           </div>
         </div>
       </div>
-
       <style>{`
         @keyframes float {
           0%,
