@@ -64,8 +64,6 @@ export const AuthProvider = ({ children }: ProviderProps) => {
 
   const SignIn = useCallback(
     async ({ registrationCode }: SignInCredentials): Promise<void> => {
-      const response = await signInAnonymously(auth);
-
       const collectionRef = collection(firestore, "participant");
       const queryUser = query(
         collectionRef,
@@ -79,15 +77,16 @@ export const AuthProvider = ({ children }: ProviderProps) => {
           "@registrationCode",
           participantData.registrationCode
         );
-      }
 
-      if (response.user) {
-        const { displayName, uid } = response.user;
-        setUser({
-          id: uid,
-          name: displayName,
-          registrationCode: participantData.registrationCode,
-        });
+        const response = await signInAnonymously(auth);
+        if (response.user) {
+          const { displayName, uid } = response.user;
+          setUser({
+            id: uid,
+            name: displayName,
+            registrationCode: participantData.registrationCode,
+          });
+        }
       }
     },
     []
