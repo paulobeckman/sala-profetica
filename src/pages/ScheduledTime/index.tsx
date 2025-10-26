@@ -6,137 +6,332 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useFirestoreGetDocument } from "@/utils/firestore";
+import type { ParticipantType } from "@/interface/paticipant";
+import { useAuth } from "@/hooks/use-auth";
 
 export function Component() {
-  // const formatDate = (date: Date) => {
-  //   return new Intl.DateTimeFormat("pt-BR", {
-  //     weekday: "long",
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "numeric",
-  //   }).format(date);
-  // };
+  const { user } = useAuth();
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat("pt-BR", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    }).format(date);
+  };
 
-  // const formatTime = (date: Date) => {
-  //   return new Intl.DateTimeFormat("pt-BR", {
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //   }).format(date);
-  // };
+  const formatTime = (date: Date) => {
+    return new Intl.DateTimeFormat("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  };
+
+  const { data: participant } = useFirestoreGetDocument<ParticipantType>(
+    `participant/${user?.registrationCode}`
+  );
+
+  if (!participant) {
+    return null;
+  }
 
   return (
-    <div>
-      /* Card de resultado com animação de entrada */
-      <Card className="shadow-2xl border-0 backdrop-blur-xl bg-white/5 overflow-hidden animate-scale-in">
-        <div className="absolute inset-0 bg-linear-to-br from-[#E1FF2F]/10 to-transparent" />
+    <div className="relative min-h-screen overflow-hidden bg-[#003280]">
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Gradiente base */}
+        <div className="absolute inset-0 bg-linear-to-br from-[#003280] via-[#0047b3] to-[#003280]" />
 
-        <div className="relative">
-          <CardHeader className="text-center pb-6">
-            {/* Ícone de sucesso animado */}
-            <div className="flex justify-center mb-6">
-              <div className="relative">
-                <div className="absolute inset-0 bg-[#E1FF2F] rounded-full blur-2xl opacity-50 animate-pulse" />
-                <div
-                  className="relative h-24 w-24 rounded-full flex items-center justify-center animate-bounce-in"
-                  style={{ backgroundColor: "#E1FF2F" }}
-                >
-                  <CheckCircle2
-                    className="h-12 w-12"
-                    style={{ color: "#003280" }}
-                    strokeWidth={3}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <CardTitle
-              className="text-4xl md:text-5xl font-black text-balance mb-3"
-              style={{ color: "#E1FF2F" }}
-            >
-              Confirmado!
-            </CardTitle>
-            <CardDescription
-              className="text-lg"
-              style={{ color: "#FFFFFF", opacity: 0.8 }}
-            >
-              Código:{" "}
-              <span className="font-mono font-bold text-[#E1FF2F]">code</span>
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-4 pb-8">
-            {/* Data */}
-            <div className="relative group/card">
-              <div className="absolute inset-0 bg-linear-to-r from-[#E1FF2F] to-[#B8FF00] rounded-2xl blur-lg opacity-0 group-hover/card:opacity-30 transition-opacity duration-300" />
-              <div
-                className="relative flex items-center gap-5 p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 transform group-hover/card:scale-[1.02]"
-                style={{ backgroundColor: "#E1FF2F" }}
-              >
-                <div
-                  className="h-16 w-16 rounded-2xl flex items-center justify-center shrink-0 shadow-lg"
-                  style={{ backgroundColor: "#003280" }}
-                >
-                  <Calendar
-                    className="h-8 w-8"
-                    style={{ color: "#E1FF2F" }}
-                    strokeWidth={2.5}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p
-                    className="text-sm font-bold uppercase tracking-wider mb-2"
-                    style={{ color: "#003280", opacity: 0.7 }}
-                  >
-                    Data
-                  </p>
-                  <p
-                    className="text-xl md:text-2xl font-black capitalize text-pretty"
-                    style={{ color: "#003280" }}
-                  >
-                    data
-                    {/* {formatDate(appointment.date)} */}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Horário */}
-            <div className="relative group/card">
-              <div className="absolute inset-0 bg-linear-to-r from-[#E1FF2F] to-[#B8FF00] rounded-2xl blur-lg opacity-0 group-hover/card:opacity-30 transition-opacity duration-300" />
-              <div
-                className="relative flex items-center gap-5 p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 transform group-hover/card:scale-[1.02]"
-                style={{ backgroundColor: "#E1FF2F" }}
-              >
-                <div
-                  className="h-16 w-16 rounded-2xl flex items-center justify-center shrink-0 shadow-lg"
-                  style={{ backgroundColor: "#003280" }}
-                >
-                  <Clock
-                    className="h-8 w-8"
-                    style={{ color: "#E1FF2F" }}
-                    strokeWidth={2.5}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p
-                    className="text-sm font-bold uppercase tracking-wider mb-2"
-                    style={{ color: "#003280", opacity: 0.7 }}
-                  >
-                    Horário
-                  </p>
-                  <p
-                    className="text-xl md:text-2xl font-black"
-                    style={{ color: "#003280" }}
-                  >
-                    hora
-                    {/* {formatTime(appointment.date)} */}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
+        {/* Mesh gradient animado */}
+        <div className="absolute inset-0 opacity-40">
+          <div
+            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] animate-float"
+            style={{
+              background:
+                "radial-gradient(circle, #E1FF2F 0%, transparent 70%)",
+              animation: "float 20s ease-in-out infinite",
+            }}
+          />
+          <div
+            className="absolute top-1/4 right-0 w-[500px] h-[500px] rounded-full blur-[100px] animate-float-delayed"
+            style={{
+              background:
+                "radial-gradient(circle, #00FFFF 0%, transparent 70%)",
+              animation: "float 15s ease-in-out infinite 5s",
+            }}
+          />
+          <div
+            className="absolute bottom-0 left-1/3 w-[700px] h-[700px] rounded-full blur-[130px] animate-float-slow"
+            style={{
+              background:
+                "radial-gradient(circle, #E1FF2F 0%, transparent 70%)",
+              animation: "float 25s ease-in-out infinite 10s",
+            }}
+          />
+          <div
+            className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] rounded-full blur-[90px] animate-pulse-slow"
+            style={{
+              background:
+                "radial-gradient(circle, #FF00FF 0%, transparent 70%)",
+              animation: "pulse-slow 8s ease-in-out infinite",
+            }}
+          />
         </div>
-      </Card>
+
+        {/* Grid overlay sutil */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(#E1FF2F 1px, transparent 1px), linear-gradient(90deg, #E1FF2F 1px, transparent 1px)`,
+            backgroundSize: "50px 50px",
+          }}
+        />
+      </div>
+
+      {/* Conteúdo principal */}
+      <div className="relative z-10 container mx-auto px-2 py-10">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-8 space-y-3">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E1FF2F]/10 border border-[#E1FF2F]/20 backdrop-blur-sm mb-4">
+              <span className="text-sm font-medium text-[#E1FF2F]">
+                DIFLEN GLOBAL 2025
+              </span>
+            </div>
+
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-balance tracking-tight leading-none">
+              <span className="bg-linear-to-tr from-[#FFFFFF] to-[#E1FF2F] bg-clip-text text-transparent animate-gradient">
+                SALA
+              </span>
+              <br />
+              <span className="text-[#E1FF2F]">PROFÉTICA</span>
+            </h1>
+          </div>
+
+          {/* Card de resultado com animação de entrada */}
+          <Card className="shadow-2xl border-0 backdrop-blur-xl bg-white/5 overflow-hidden animate-scale-in">
+            <div className="absolute inset-0 bg-linear-to-br from-[#E1FF2F]/10 to-transparent" />
+
+            <div className="relative">
+              <CardHeader className="text-center pb-6">
+                {/* Ícone de sucesso animado */}
+                <div className="flex justify-center mb-1">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-[#E1FF2F] rounded-full blur-2xl opacity-50 animate-pulse" />
+                    <div
+                      className="relative h-16 w-16 rounded-full flex items-center justify-center animate-bounce-in"
+                      style={{ backgroundColor: "#E1FF2F" }}
+                    >
+                      <CheckCircle2
+                        className="h-8 w-8"
+                        style={{ color: "#003280" }}
+                        strokeWidth={3}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <CardTitle
+                  className="text-2xl md:text-4xl font-black text-balance mb-1"
+                  style={{ color: "#E1FF2F" }}
+                >
+                  Seu horário está confirmado!
+                </CardTitle>
+                <CardDescription
+                  className="text-lg"
+                  style={{ color: "#FFFFFF" }}
+                >
+                  Olá,{" "}
+                  <span className="font-mono font-bold text-[#E1FF2F]">
+                    {participant.name}
+                  </span>
+                  <p>
+                    abaixo está o seu horário para a Sala Profética não perca. E
+                    desde já prepare-se em oração para esse momento!
+                  </p>
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="space-y-4 pb-8">
+                {/* Data */}
+                <div className="relative group/card">
+                  <div className="absolute inset-0 bg-linear-to-r from-[#E1FF2F] to-[#B8FF00] rounded-2xl blur-lg opacity-0 group-hover/card:opacity-30 transition-opacity duration-300" />
+                  <div
+                    className="relative flex items-center gap-5 p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 transform group-hover/card:scale-[1.02]"
+                    style={{ backgroundColor: "#E1FF2F" }}
+                  >
+                    <div
+                      className="h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg"
+                      style={{ backgroundColor: "#003280" }}
+                    >
+                      <Calendar
+                        className="h-6 w-6"
+                        style={{ color: "#E1FF2F" }}
+                        strokeWidth={2.5}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-sm font-bold uppercase tracking-wider mb-2"
+                        style={{ color: "#003280", opacity: 0.7 }}
+                      >
+                        Data
+                      </p>
+                      <p
+                        className="text-xl md:text-2xl font-black capitalize text-pretty"
+                        style={{ color: "#003280" }}
+                      >
+                        {formatDate(participant.room.date.toDate())}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Horário */}
+                <div className="relative group/card">
+                  <div className="absolute inset-0 bg-linear-to-r from-[#E1FF2F] to-[#B8FF00] rounded-2xl blur-lg opacity-0 group-hover/card:opacity-30 transition-opacity duration-300" />
+                  <div
+                    className="relative flex items-center gap-5 p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 transform group-hover/card:scale-[1.02]"
+                    style={{ backgroundColor: "#E1FF2F" }}
+                  >
+                    <div
+                      className="h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg"
+                      style={{ backgroundColor: "#003280" }}
+                    >
+                      <Clock
+                        className="h-6 w-6"
+                        style={{ color: "#E1FF2F" }}
+                        strokeWidth={2.5}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-sm font-bold uppercase tracking-wider mb-2"
+                        style={{ color: "#003280", opacity: 0.7 }}
+                      >
+                        Horário
+                      </p>
+                      <p
+                        className="text-xl md:text-2xl font-black"
+                        style={{ color: "#003280" }}
+                      >
+                        {formatTime(participant.room.date.toDate())}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </div>
+          </Card>
+
+          <div className="text-center mt-6 space-y-2">
+            <p className="text-white/60 text-sm font-medium">
+              Dúvidas? Procure um dos nossos voluntários
+            </p>
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-[#E1FF2F] animate-pulse" />
+              <div
+                className="w-2 h-2 rounded-full bg-[#E1FF2F] animate-pulse"
+                style={{ animationDelay: "0.2s" }}
+              />
+              <div
+                className="w-2 h-2 rounded-full bg-[#E1FF2F] animate-pulse"
+                style={{ animationDelay: "0.4s" }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes float {
+          0%,
+          100% {
+            transform: translate(0, 0) scale(1);
+          }
+          33% {
+            transform: translate(50px, -80px) scale(1.1);
+          }
+          66% {
+            transform: translate(-30px, 40px) scale(0.9);
+          }
+        }
+
+        @keyframes pulse-slow {
+          0%,
+          100% {
+            opacity: 0.4;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.6;
+            transform: scale(1.05);
+          }
+        }
+
+        @keyframes gradient {
+          0%,
+          100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+        }
+
+        @keyframes scale-in {
+          0% {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes bounce-in {
+          0% {
+            opacity: 0;
+            transform: scale(0);
+          }
+          50% {
+            transform: scale(1.1);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes shake {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          25% {
+            transform: translateX(-5px);
+          }
+          75% {
+            transform: translateX(5px);
+          }
+        }
+
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 3s ease infinite;
+        }
+
+        .animate-scale-in {
+          animation: scale-in 0.5s ease-out;
+        }
+
+        .animate-bounce-in {
+          animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .animate-shake {
+          animation: shake 0.5s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }

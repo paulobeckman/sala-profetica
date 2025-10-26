@@ -11,12 +11,16 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Sparkles } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 export default function RegistrationSystem() {
   const [code, setCode] = useState(Array(9).fill(""));
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const { SignIn, loadingUserAuth } = useAuth();
+  const navigate = useNavigate();
 
   const handleInputChange = (index: number, value: string) => {
     // Aceitar apenas letras e números
@@ -75,10 +79,9 @@ export default function RegistrationSystem() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setIsLoading(true);
 
     const fullCode = code.join("");
 
@@ -86,11 +89,18 @@ export default function RegistrationSystem() {
       setError(
         "Por favor, insira um código válido de 9 caracteres (letras e números)"
       );
-      setIsLoading(false);
       return;
     }
 
-    console.log("Consultando código:", fullCode);
+    try {
+      await SignIn({ registrationCode: fullCode });
+      console.log("Consultando código:", fullCode);
+
+      await navigate("/horario");
+    } catch (error) {
+      console.error(error);
+      toast.error("Código incorreto, tente novamente.");
+    }
   };
 
   // const handleReset = () => {
@@ -223,7 +233,7 @@ export default function RegistrationSystem() {
                               ? "0 0 30px rgba(225, 255, 47, 0.5)"
                               : "none",
                           }}
-                          disabled={isLoading}
+                          disabled={loadingUserAuth}
                         />
                       ))}
 
@@ -259,7 +269,7 @@ export default function RegistrationSystem() {
                               ? "0 0 30px rgba(225, 255, 47, 0.5)"
                               : "none",
                           }}
-                          disabled={isLoading}
+                          disabled={loadingUserAuth}
                         />
                       ))}
 
@@ -295,7 +305,7 @@ export default function RegistrationSystem() {
                               ? "0 0 30px rgba(225, 255, 47, 0.5)"
                               : "none",
                           }}
-                          disabled={isLoading}
+                          disabled={loadingUserAuth}
                         />
                       ))}
                     </div>
@@ -320,13 +330,13 @@ export default function RegistrationSystem() {
                       border: "none",
                       boxShadow: "0 10px 40px rgba(225, 255, 47, 0.3)",
                     }}
-                    disabled={isLoading || code.join("").length !== 9}
+                    disabled={loadingUserAuth || code.join("").length !== 9}
                   >
                     {/* Efeito de brilho ao hover */}
                     <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
 
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                      {isLoading ? (
+                      {loadingUserAuth ? (
                         <>
                           <div className="w-6 h-6 border-3 border-[#003280] border-t-transparent rounded-full animate-spin" />
                           Consultando...

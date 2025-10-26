@@ -5,16 +5,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import { onAuthStateChanged, signInAnonymously, signOut } from "firebase/auth";
 
 import auth from "@/services/firebase/auth";
 import { collection, getDocs, limit, query, where } from "firebase/firestore";
 import firestore from "@/services/firebase/firestore";
-import type { UserType } from "@/interface/User";
+import type { ParticipantType } from "@/interface/paticipant";
 
 type ProviderProps = {
   children: React.ReactNode;
@@ -23,17 +19,15 @@ type ProviderProps = {
 type UserAuth = {
   id: string;
   name: string | null;
-  email: string | null;
-  groupId: string | null;
+  registrationCode: string | null;
 };
 
 type SignInCredentials = {
-  email: string;
-  password: string;
+  registrationCode: string;
 };
 
 type AuthContextData = {
-  SignIn: ({ email, password }: SignInCredentials) => Promise<void>;
+  SignIn: ({ registrationCode }: SignInCredentials) => Promise<void>;
   SignOut: () => Promise<void>;
   user: UserAuth | undefined;
   isAuthenticated: boolean;
@@ -51,13 +45,12 @@ export const AuthProvider = ({ children }: ProviderProps) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const { displayName, uid, email } = user;
-        const groupId = localStorage.getItem("@groupId");
+        const { displayName, uid } = user;
+        const registrationCode = localStorage.getItem("@registrationCode");
         setUser({
           id: uid,
           name: displayName,
-          email,
-          groupId,
+          registrationCode,
         });
       }
 
@@ -70,19 +63,22 @@ export const AuthProvider = ({ children }: ProviderProps) => {
   }, []);
 
   const SignIn = useCallback(
-    async ({ email, password }: SignInCredentials): Promise<void> => {
-      const response = await signInWithEmailAndPassword(auth, email, password);
+    async ({ registrationCode }: SignInCredentials): Promise<void> => {
+      const response = await signInAnonymously(auth);
 
-      const collectionRef = collection(firestore, "user");
+      const collectionRef = collection(firestore, "participant");
       const queryUser = query(
         collectionRef,
-        where("email", "==", email),
+        where("registrationCode", "==", registrationCode),
         limit(1)
       );
       const querySnapshot = await getDocs(queryUser);
-      const userData = querySnapshot.docs[0].data() as UserType;
-      if (userData.groupId) {
-        localStorage.setItem("@groupId", userData.groupId);
+      const participantData = querySnapshot.docs[0].data() as ParticipantType;
+      if (participantData.registrationCode) {
+        localStorage.setItem(
+          "@registrationCode",
+          participantData.registrationCode
+        );
       }
 
       if (response.user) {
@@ -90,8 +86,7 @@ export const AuthProvider = ({ children }: ProviderProps) => {
         setUser({
           id: uid,
           name: displayName,
-          email,
-          groupId: userData.groupId,
+          registrationCode: participantData.registrationCode,
         });
       }
     },
