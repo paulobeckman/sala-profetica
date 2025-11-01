@@ -116,13 +116,17 @@ export function Component() {
     }
 
     try {
-      await SignIn({ registrationCode: fullCode });
+      const response = await SignIn({ registrationCode: fullCode });
       console.log("Consultando código:", fullCode);
-
-      await navigate("/horario");
+      if (response) {
+        return await navigate("/horario");
+      }
+      toast.error("Código incorreto, tente novamente.");
     } catch (error) {
       console.error(error);
-      toast.error("Código incorreto, tente novamente.");
+      toast.error(
+        "Ocorreu uma falha, tente novamente em instantes ou procure um de nossos voluntários."
+      );
     }
   };
 

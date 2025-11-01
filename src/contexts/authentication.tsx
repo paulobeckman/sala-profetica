@@ -27,7 +27,7 @@ type SignInCredentials = {
 };
 
 type AuthContextData = {
-  SignIn: ({ registrationCode }: SignInCredentials) => Promise<void>;
+  SignIn: ({ registrationCode }: SignInCredentials) => Promise<boolean>;
   SignOut: () => Promise<void>;
   user: UserAuth | undefined;
   isAuthenticated: boolean;
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: ProviderProps) => {
   }, []);
 
   const SignIn = useCallback(
-    async ({ registrationCode }: SignInCredentials): Promise<void> => {
+    async ({ registrationCode }: SignInCredentials): Promise<boolean> => {
       setLoadingUserAuth(true);
       const collectionRef = collection(firestore, "participant");
       const queryUser = query(
@@ -72,8 +72,10 @@ export const AuthProvider = ({ children }: ProviderProps) => {
         limit(1)
       );
       const querySnapshot = await getDocs(queryUser);
-      const participantData = querySnapshot.docs[0].data() as ParticipantType;
-      if (participantData.registrationCode) {
+      const participantData = querySnapshot?.docs[0]?.data() as
+        | ParticipantType
+        | undefined;
+      if (participantData?.registrationCode) {
         localStorage.setItem(
           "@registrationCode",
           participantData.registrationCode
@@ -87,9 +89,11 @@ export const AuthProvider = ({ children }: ProviderProps) => {
             name: displayName,
             registrationCode: participantData.registrationCode,
           });
+          return true;
         }
       }
       setLoadingUserAuth(false);
+      return false;
     },
     []
   );

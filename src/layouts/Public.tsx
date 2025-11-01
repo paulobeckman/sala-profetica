@@ -14,7 +14,7 @@ const PublicLayout = () => {
     }
   }, [loadingUserAuth, navigate, user]);
 
-  if (loadingUserAuth && !user) {
+  if (loadingUserAuth && user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-white">
         <img
