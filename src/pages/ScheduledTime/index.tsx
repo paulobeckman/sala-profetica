@@ -1,4 +1,10 @@
-import { Calendar, Clock, CheckCircle2 } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  CheckCircle2,
+  CalendarRange,
+  ArrowLeft,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -11,6 +17,7 @@ import type { ParticipantType } from "@/interface/paticipant";
 import { useAuth } from "@/hooks/use-auth";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router";
 
 export function Component() {
   const { user } = useAuth();
@@ -183,6 +190,31 @@ export function Component() {
             </CardContent>
           </div>
         </Card>
+
+        <div className="max-w-2xl mx-auto mt-8 mb-6">
+          <Link to="/programacao">
+            <div className="relative group cursor-pointer">
+              <div className="absolute inset-0 bg-linear-to-r from-[#E1FF2F] via-[#00FFFF] to-[#E1FF2F] rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-500" />
+              <div
+                className="relative flex items-center justify-between p-4 md:p-5 rounded-2xl backdrop-blur-xl transition-all duration-300 group-hover:scale-[1.02] border border-[#E1FF2F]/30"
+                style={{ backgroundColor: "rgba(225, 255, 47, 0.1)" }}
+              >
+                <div className="flex items-center gap-3">
+                  <CalendarRange className="w-6 h-6 text-[#E1FF2F] shrink-0" />
+                  <div>
+                    <h2 className="text-2xl text-start md:text-3xl font-black text-[#E1FF2F]">
+                      Programação
+                    </h2>
+                    <p className="text-start mt-1 text-white/80 text-sm md:text-base">
+                      Clique aqui e confira a programação do DIFLEN GLOBAL 2025
+                    </p>
+                  </div>
+                </div>
+                <ArrowLeft className="w-6 h-6 text-[#E1FF2F] rotate-180 shrink-0" />
+              </div>
+            </div>
+          </Link>
+        </div>
 
         <div className="text-center mt-6 space-y-2">
           <p className="text-white/60 text-sm font-medium">

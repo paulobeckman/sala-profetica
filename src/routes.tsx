@@ -22,6 +22,10 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/programacao",
+    lazy: () => import("@/pages/Agenda"),
+  },
+  {
     path: "*",
     element: <Navigate to="/horario" replace />,
   },
