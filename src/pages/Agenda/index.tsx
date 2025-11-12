@@ -142,7 +142,7 @@ export function Component() {
                       Sala Profética
                     </h2>
                     <p className="text-white/80 mt-1 text-sm md:text-base">
-                      Clique aqui e descubra o seu horário na Sala Profética
+                      Clique aqui e escolha o seu horário na Sala Profética
                     </p>
                   </div>
                 </div>

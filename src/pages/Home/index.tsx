@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type React from "react";
 import { useState, useRef } from "react";
 import {
@@ -8,17 +9,59 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, ArrowLeft, CalendarRange, Flame } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  CalendarRange,
+  Flame,
+  FlameIcon,
+} from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
+import type { ParticipantType } from "@/interface/paticipant";
+import {
+  collection,
+  doc,
+  DocumentReference,
+  getDocs,
+  increment,
+  limit,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import firestore from "@/services/firebase/firestore";
+import { useFirestoreGetList } from "@/utils/firestore";
+import type { RoomType } from "@/interface/room";
 
 export function Component() {
   const [code, setCode] = useState(Array(9).fill(""));
+  const [fullCodeVerify, setFullCodeVerify] = useState<undefined | string>();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectTime, setSelectTime] = useState(false);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<RoomType | null>(
+    null
+  );
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { SignIn, loadingUserAuth } = useAuth();
   const navigate = useNavigate();
+
+  const { data: room } = useFirestoreGetList<RoomType>("room", {
+    orderBy: { field: "name", direction: "asc" },
+  });
+
+  const groupedSlots = room
+    .filter((f) => f.limit > f.participants && f.active)
+    .reduce((acc: any, slot: any) => {
+      if (!acc[slot.fullDay]) {
+        acc[slot.fullDay] = [];
+      }
+      acc[slot.fullDay].push(slot);
+      return acc;
+    }, {});
 
   const handleInputChange = (index: number, value: string) => {
     // Aceitar apenas letras e números
@@ -49,6 +92,56 @@ export function Component() {
       if (index < 8) {
         inputRefs.current[index + 1]?.focus();
       }
+    }
+  };
+
+  const handleTimeSlotSelect = async () => {
+    setLoading(true);
+    console.log("Horário selecionado:", selectedTimeSlot);
+
+    try {
+      if (!fullCodeVerify || !selectedTimeSlot) {
+        toast.error(
+          "Ocorreu uma falha, tente novamente em instantes ou procure um de nossos voluntários."
+        );
+        setLoading(false);
+        return;
+      }
+      const data: Partial<ParticipantType> = {
+        room: {
+          id: selectedTimeSlot.id,
+          date: selectedTimeSlot.date,
+          hour: selectedTimeSlot.hour,
+          interval: selectedTimeSlot.interval,
+        },
+      };
+
+      const docRef = doc(
+        firestore,
+        "participant",
+        fullCodeVerify
+      ) as DocumentReference;
+      await setDoc(docRef, data, { merge: true });
+      const docRefRoom = doc(
+        firestore,
+        "room",
+        selectedTimeSlot.id
+      ) as DocumentReference;
+      await updateDoc(docRefRoom, { participants: increment(1) });
+      const response = await SignIn({ registrationCode: fullCodeVerify });
+
+      if (response) {
+        setLoading(false);
+        return await navigate("/horario");
+      }
+      setLoading(false);
+      toast.error("Código incorreto, tente novamente.");
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+      toast.error(
+        "Ocorreu uma falha, tente novamente em instantes ou procure um de nossos voluntários."
+      );
     }
   };
 
@@ -102,7 +195,8 @@ export function Component() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    setLoading(true);
     e.preventDefault();
     setError("");
 
@@ -112,21 +206,48 @@ export function Component() {
       setError(
         "Por favor, insira um código válido de 9 caracteres (letras e números)"
       );
+      setLoading(false);
       return;
     }
 
-    try {
-      const response = await SignIn({ registrationCode: fullCode });
-      console.log("Consultando código:", fullCode);
-      if (response) {
-        return await navigate("/horario");
+    const collectionRef = collection(firestore, "participant");
+    const queryUser = query(
+      collectionRef,
+      where("registrationCode", "==", fullCode),
+      limit(1)
+    );
+    const querySnapshot = await getDocs(queryUser);
+    const participantData = querySnapshot?.docs[0]?.data() as
+      | ParticipantType
+      | undefined;
+
+    if (!participantData) {
+      setLoading(false);
+      return toast.error("Código incorreto, tente novamente.");
+    }
+
+    if (participantData && !participantData?.room) {
+      setSelectTime(true);
+      setFullCodeVerify(fullCode);
+      setLoading(false);
+      return;
+    }
+    if (participantData && participantData?.room) {
+      try {
+        const response = await SignIn({ registrationCode: fullCode });
+        if (response) {
+          setLoading(false);
+          return await navigate("/horario");
+        }
+        setLoading(false);
+        toast.error("Código incorreto, tente novamente.");
+      } catch (error) {
+        setLoading(false);
+        console.error(error);
+        toast.error(
+          "Ocorreu uma falha, tente novamente em instantes ou procure um de nossos voluntários."
+        );
       }
-      toast.error("Código incorreto, tente novamente.");
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        "Ocorreu uma falha, tente novamente em instantes ou procure um de nossos voluntários."
-      );
     }
   };
 
@@ -179,183 +300,326 @@ export function Component() {
               </h1>
 
               <p className="text-xl md:text-2xl text-white/80 font-light text-pretty max-w-lg mx-auto">
-                Descubra seu horário na sala profética inserindo o código do seu
-                comprovante abaixo.
+                Escolha seu horário na sala profética inserindo o código do seu
+                comprovante de inscrição abaixo.
               </p>
             </div>
           </div>
 
           {/* Formulário de entrada */}
-          <Card className="shadow-2xl border-0 backdrop-blur-xl bg-white/5 overflow-hidden group hover:bg-white/10 transition-all duration-500">
-            {/* Borda animada */}
-            <div className="absolute inset-0 rounded-lg bg-linear-to-r from-[#E1FF2F] via-[#00FFFF] to-[#E1FF2F] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500" />
+          {selectTime ? (
+            <Card className="shadow-2xl border-0 backdrop-blur-xl bg-white/5 overflow-hidden animate-scale-in">
+              <div className="absolute inset-0 bg-linear-to-br from-[#E1FF2F]/10 to-transparent" />
 
-            <div className="relative">
-              <CardHeader className="space-y-1 pb-6">
-                <CardTitle className=" text-2xl sm:text-3xl md:text-4xl font-bold text-[#E1FF2F]">
-                  Código de Inscrição
-                </CardTitle>
-                <CardDescription className="text-md sm:text-lg text-white">
-                  Digite os 9 caracteres do seu código de inscrição que está no
-                  seu comprovante de inscrição.
-                </CardDescription>
-              </CardHeader>
+              <div className="relative">
+                <CardHeader className="pb-8">
+                  <CardTitle className="text-3xl md:text-4xl font-bold text-[#E1FF2F] mb-2">
+                    Selecione seu Horário
+                  </CardTitle>
+                  <CardDescription className="text-lg text-white/70">
+                    Escolha um dos horários disponíveis para sua sessão
+                  </CardDescription>
+                </CardHeader>
 
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-center gap-1 sm:gap-2">
-                      {/* Primeiro grupo */}
-                      {[0, 1, 2].map((index) => (
-                        <input
-                          key={index}
-                          ref={(el) => {
-                            inputRefs.current[index] = el;
-                          }}
-                          type="text"
-                          maxLength={1}
-                          value={code[index]}
-                          onChange={(e) =>
-                            handleInputChange(index, e.target.value)
-                          }
-                          onKeyDown={(e) => handleKeyDown(index, e)}
-                          onFocus={() => handleFocus(index)}
-                          className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
-                          style={{
-                            backgroundColor: code[index]
-                              ? "#E1FF2F"
-                              : "rgba(255, 255, 255, 0.1)",
-                            borderColor: code[index]
-                              ? "#E1FF2F"
-                              : "rgba(225, 255, 47, 0.3)",
-                            color: code[index] ? "#003280" : "#E1FF2F",
-                            caretColor: "#E1FF2F",
-                            boxShadow: code[index]
-                              ? "0 0 30px rgba(225, 255, 47, 0.5)"
-                              : "none",
-                          }}
-                          disabled={loadingUserAuth}
-                        />
-                      ))}
+                <CardContent className="space-y-8">
+                  {Object.entries(groupedSlots).map(
+                    ([dayKey, slots]: [string, any]) => (
+                      <div key={dayKey} className="space-y-4">
+                        {/* Day header */}
+                        <div className="px-2 md:px-4">
+                          <h3 className="text-2xl md:text-3xl font-black text-[#E1FF2F] uppercase tracking-wider">
+                            {dayKey}
+                          </h3>
+                          <div className="h-1 w-20 bg-linear-to-r from-[#E1FF2F] to-transparent mt-2 rounded-full" />
+                        </div>
 
-                      <div className="text-1xl sm:text-3xl font-black text-[#E1FF2F] sm:mx-1 animate-pulse">
-                        -
+                        {/* Time slots grid for this day */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3">
+                          {slots.map((slot: RoomType) => (
+                            <button
+                              disabled={loading}
+                              key={slot.id}
+                              onClick={() => {
+                                setSelectedTimeSlot(slot);
+                                setError("");
+                              }}
+                              className="relative group/slot p-3 md:p-4 rounded-lg md:rounded-xl transition-all duration-300 transform hover:scale-[1.05] border-2 flex flex-col items-center justify-center gap-1"
+                              style={{
+                                backgroundColor:
+                                  selectedTimeSlot?.id === slot.id
+                                    ? "#E1FF2F"
+                                    : "rgba(225, 255, 47, 0.1)",
+                                borderColor:
+                                  selectedTimeSlot?.id === slot.id
+                                    ? "#E1FF2F"
+                                    : "rgba(225, 255, 47, 0.3)",
+                              }}
+                            >
+                              {/* Radio button indicator */}
+                              <div
+                                className="w-5 h-5 md:w-6 md:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+                                style={{
+                                  borderColor:
+                                    selectedTimeSlot?.id === slot.id
+                                      ? "#003280"
+                                      : "rgba(225, 255, 47, 0.5)",
+                                  backgroundColor:
+                                    selectedTimeSlot?.id === slot.id
+                                      ? "#003280"
+                                      : "transparent",
+                                }}
+                              >
+                                {selectedTimeSlot?.id === slot.id && (
+                                  <div
+                                    className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full"
+                                    style={{ backgroundColor: "#E1FF2F" }}
+                                  />
+                                )}
+                              </div>
+                              <p
+                                className="text-sm md:text-base font-black"
+                                style={{
+                                  color:
+                                    selectedTimeSlot?.id === slot.id
+                                      ? "#003280"
+                                      : "#E1FF2F",
+                                }}
+                              >
+                                {slot.interval}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  )}
+
+                  {error && (
+                    <div className="flex items-center justify-center gap-2 text-base bg-red-500/10 border border-red-500/20 rounded-lg p-3 backdrop-blur-sm animate-shake">
+                      <AlertCircle className="h-5 w-5 text-red-400" />
+                      <span className="text-red-400 font-medium">{error}</span>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      disabled={loading}
+                      onClick={() => setSelectTime(false)}
+                      className="flex-1 h-14 text-lg font-black rounded-2xl"
+                      style={{
+                        background: "rgba(225, 255, 47, 0.1)",
+                        color: "#E1FF2F",
+                        border: "2px solid rgba(225, 255, 47, 0.3)",
+                      }}
+                    >
+                      <ArrowLeft className="w-5 h-5 mr-2" />
+                      Voltar
+                    </Button>
+                    <Button
+                      onClick={handleTimeSlotSelect}
+                      className="flex-1 h-14 text-lg font-black rounded-2xl relative overflow-hidden group/btn"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, #E1FF2F 0%, #B8FF00 100%)",
+                        color: "#003280",
+                        border: "none",
+                        boxShadow: "0 10px 40px rgba(225, 255, 47, 0.3)",
+                      }}
+                      disabled={!selectedTimeSlot || loading}
+                    >
+                      <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        {loading || loadingUserAuth ? (
+                          <>
+                            <div className="w-6 h-6 border-3 border-[#003280] border-t-transparent rounded-full animate-spin" />
+                            Confirmando...
+                          </>
+                        ) : (
+                          <>
+                            <FlameIcon className="w-5 h-5" />
+                            Confirmar
+                          </>
+                        )}
+                      </span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </div>
+            </Card>
+          ) : (
+            <Card className="shadow-2xl border-0 backdrop-blur-xl bg-white/5 overflow-hidden group hover:bg-white/10 transition-all duration-500">
+              {/* Borda animada */}
+              <div className="absolute inset-0 rounded-lg bg-linear-to-r from-[#E1FF2F] via-[#00FFFF] to-[#E1FF2F] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500" />
+
+              <div className="relative">
+                <CardHeader className="space-y-1 pb-6">
+                  <CardTitle className=" text-2xl sm:text-3xl md:text-4xl font-bold text-[#E1FF2F]">
+                    Código de Inscrição
+                  </CardTitle>
+                  <CardDescription className="text-md sm:text-lg text-white">
+                    Digite os 9 caracteres do seu código de inscrição que está
+                    no seu comprovante de inscrição.
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                  <form onSubmit={handleCodeSubmit} className="space-y-8">
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-center gap-1 sm:gap-2">
+                        {/* Primeiro grupo */}
+                        {[0, 1, 2].map((index) => (
+                          <input
+                            key={index}
+                            ref={(el) => {
+                              inputRefs.current[index] = el;
+                            }}
+                            type="text"
+                            maxLength={1}
+                            value={code[index]}
+                            onChange={(e) =>
+                              handleInputChange(index, e.target.value)
+                            }
+                            onKeyDown={(e) => handleKeyDown(index, e)}
+                            onFocus={() => handleFocus(index)}
+                            className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
+                            style={{
+                              backgroundColor: code[index]
+                                ? "#E1FF2F"
+                                : "rgba(255, 255, 255, 0.1)",
+                              borderColor: code[index]
+                                ? "#E1FF2F"
+                                : "rgba(225, 255, 47, 0.3)",
+                              color: code[index] ? "#003280" : "#E1FF2F",
+                              caretColor: "#E1FF2F",
+                              boxShadow: code[index]
+                                ? "0 0 30px rgba(225, 255, 47, 0.5)"
+                                : "none",
+                            }}
+                            disabled={loadingUserAuth || loading}
+                          />
+                        ))}
+
+                        <div className="text-1xl sm:text-3xl font-black text-[#E1FF2F] sm:mx-1 animate-pulse">
+                          -
+                        </div>
+
+                        {/* Segundo grupo */}
+                        {[3, 4, 5].map((index) => (
+                          <input
+                            key={index}
+                            ref={(el) => {
+                              inputRefs.current[index] = el;
+                            }}
+                            type="text"
+                            maxLength={1}
+                            value={code[index]}
+                            onChange={(e) =>
+                              handleInputChange(index, e.target.value)
+                            }
+                            onKeyDown={(e) => handleKeyDown(index, e)}
+                            onFocus={() => handleFocus(index)}
+                            className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
+                            style={{
+                              backgroundColor: code[index]
+                                ? "#E1FF2F"
+                                : "rgba(255, 255, 255, 0.1)",
+                              borderColor: code[index]
+                                ? "#E1FF2F"
+                                : "rgba(225, 255, 47, 0.3)",
+                              color: code[index] ? "#003280" : "#E1FF2F",
+                              caretColor: "#E1FF2F",
+                              boxShadow: code[index]
+                                ? "0 0 30px rgba(225, 255, 47, 0.5)"
+                                : "none",
+                            }}
+                            disabled={loadingUserAuth || loading}
+                          />
+                        ))}
+
+                        <div className="text-1xl sm:text-3xl font-black text-[#E1FF2F] sm:mx-1 animate-pulse">
+                          -
+                        </div>
+
+                        {/* Terceiro grupo */}
+                        {[6, 7, 8].map((index) => (
+                          <input
+                            key={index}
+                            ref={(el) => {
+                              inputRefs.current[index] = el;
+                            }}
+                            type="text"
+                            maxLength={1}
+                            value={code[index]}
+                            onChange={(e) =>
+                              handleInputChange(index, e.target.value)
+                            }
+                            onKeyDown={(e) => handleKeyDown(index, e)}
+                            onFocus={() => handleFocus(index)}
+                            className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
+                            style={{
+                              backgroundColor: code[index]
+                                ? "#E1FF2F"
+                                : "rgba(255, 255, 255, 0.1)",
+                              borderColor: code[index]
+                                ? "#E1FF2F"
+                                : "rgba(225, 255, 47, 0.3)",
+                              color: code[index] ? "#003280" : "#E1FF2F",
+                              caretColor: "#E1FF2F",
+                              boxShadow: code[index]
+                                ? "0 0 30px rgba(225, 255, 47, 0.5)"
+                                : "none",
+                            }}
+                            disabled={loadingUserAuth || loading}
+                          />
+                        ))}
                       </div>
 
-                      {/* Segundo grupo */}
-                      {[3, 4, 5].map((index) => (
-                        <input
-                          key={index}
-                          ref={(el) => {
-                            inputRefs.current[index] = el;
-                          }}
-                          type="text"
-                          maxLength={1}
-                          value={code[index]}
-                          onChange={(e) =>
-                            handleInputChange(index, e.target.value)
-                          }
-                          onKeyDown={(e) => handleKeyDown(index, e)}
-                          onFocus={() => handleFocus(index)}
-                          className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
-                          style={{
-                            backgroundColor: code[index]
-                              ? "#E1FF2F"
-                              : "rgba(255, 255, 255, 0.1)",
-                            borderColor: code[index]
-                              ? "#E1FF2F"
-                              : "rgba(225, 255, 47, 0.3)",
-                            color: code[index] ? "#003280" : "#E1FF2F",
-                            caretColor: "#E1FF2F",
-                            boxShadow: code[index]
-                              ? "0 0 30px rgba(225, 255, 47, 0.5)"
-                              : "none",
-                          }}
-                          disabled={loadingUserAuth}
-                        />
-                      ))}
-
-                      <div className="text-1xl sm:text-3xl font-black text-[#E1FF2F] sm:mx-1 animate-pulse">
-                        -
-                      </div>
-
-                      {/* Terceiro grupo */}
-                      {[6, 7, 8].map((index) => (
-                        <input
-                          key={index}
-                          ref={(el) => {
-                            inputRefs.current[index] = el;
-                          }}
-                          type="text"
-                          maxLength={1}
-                          value={code[index]}
-                          onChange={(e) =>
-                            handleInputChange(index, e.target.value)
-                          }
-                          onKeyDown={(e) => handleKeyDown(index, e)}
-                          onFocus={() => handleFocus(index)}
-                          className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
-                          style={{
-                            backgroundColor: code[index]
-                              ? "#E1FF2F"
-                              : "rgba(255, 255, 255, 0.1)",
-                            borderColor: code[index]
-                              ? "#E1FF2F"
-                              : "rgba(225, 255, 47, 0.3)",
-                            color: code[index] ? "#003280" : "#E1FF2F",
-                            caretColor: "#E1FF2F",
-                            boxShadow: code[index]
-                              ? "0 0 30px rgba(225, 255, 47, 0.5)"
-                              : "none",
-                          }}
-                          disabled={loadingUserAuth}
-                        />
-                      ))}
+                      {error && (
+                        <div className="flex items-center justify-center gap-2 text-base bg-red-500/10 border border-red-500/20 rounded-lg p-3 backdrop-blur-sm animate-shake">
+                          <AlertCircle className="h-5 w-5 text-red-400" />
+                          <span className="text-red-400 font-medium">
+                            {error}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
-                    {error && (
-                      <div className="flex items-center justify-center gap-2 text-base bg-red-500/10 border border-red-500/20 rounded-lg p-3 backdrop-blur-sm animate-shake">
-                        <AlertCircle className="h-5 w-5 text-red-400" />
-                        <span className="text-red-400 font-medium">
-                          {error}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                    <Button
+                      type="submit"
+                      className="w-full h-14 sm:h-16 text-lg sm:text-xl font-black rounded-2xl relative overflow-hidden group/btn transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, #E1FF2F 0%, #B8FF00 100%)",
+                        color: "#003280",
+                        border: "none",
+                        boxShadow: "0 10px 40px rgba(225, 255, 47, 0.3)",
+                      }}
+                      disabled={
+                        loadingUserAuth || loading || code.join("").length !== 9
+                      }
+                    >
+                      {/* Efeito de brilho ao hover */}
+                      <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
 
-                  <Button
-                    type="submit"
-                    className="w-full h-14 sm:h-16 text-lg sm:text-xl font-black rounded-2xl relative overflow-hidden group/btn transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #E1FF2F 0%, #B8FF00 100%)",
-                      color: "#003280",
-                      border: "none",
-                      boxShadow: "0 10px 40px rgba(225, 255, 47, 0.3)",
-                    }}
-                    disabled={loadingUserAuth || code.join("").length !== 9}
-                  >
-                    {/* Efeito de brilho ao hover */}
-                    <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
-
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      {loadingUserAuth ? (
-                        <>
-                          <div className="w-6 h-6 border-3 border-[#003280] border-t-transparent rounded-full animate-spin" />
-                          Consultando...
-                        </>
-                      ) : (
-                        <>
-                          <Flame className="w-6 h-6" />
-                          Descobrir Horário
-                        </>
-                      )}
-                    </span>
-                  </Button>
-                </form>
-              </CardContent>
-            </div>
-          </Card>
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        {loadingUserAuth || loading ? (
+                          <>
+                            <div className="w-6 h-6 border-3 border-[#003280] border-t-transparent rounded-full animate-spin" />
+                            Consultando...
+                          </>
+                        ) : (
+                          <>
+                            <Flame className="w-6 h-6" />
+                            Escolher Horário
+                          </>
+                        )}
+                      </span>
+                    </Button>
+                  </form>
+                </CardContent>
+              </div>
+            </Card>
+          )}
 
           <div className="text-center mt-6 space-y-2">
             <p className="text-white/60 text-sm font-medium">
@@ -470,5 +734,3 @@ export function Component() {
     </div>
   );
 }
-
-Component.displayName = "Home";

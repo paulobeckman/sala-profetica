@@ -23,21 +23,6 @@ export function Component() {
   const { user } = useAuth();
   const { SignOut } = useAuth();
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("pt-BR", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    }).format(date);
-  };
-
-  const formatTime = (date: Date) => {
-    return new Intl.DateTimeFormat("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
-  };
-
   const { data: participant } = useFirestoreGetDocument<ParticipantType>(
     `participant/${user?.registrationCode}`
   );
@@ -110,11 +95,20 @@ export function Component() {
               <CardDescription className="text-lg" style={{ color: "#FFFFFF" }}>
                 Olá,{" "}
                 <span className="font-mono font-bold text-[#E1FF2F]">
-                  {participant.name}
+                  {(() => {
+                    const parts = (participant.name || "")
+                      .trim()
+                      .split(/\s+/)
+                      .filter(Boolean);
+                    if (!parts.length) return "";
+                    return parts.length === 1
+                      ? parts[0]
+                      : `${parts[0]} ${parts[parts.length - 1]}`;
+                  })()}
                 </span>
                 <p>
-                  abaixo está o seu horário para a Sala Profética. Não perca!
-                  Desde já, prepare-se em oração para esse momento.
+                  abaixo estão a data e o horário de acesso à Sala Profética.
+                  Não perca! Desde já, prepare-se em oração para esse momento.
                 </p>
               </CardDescription>
             </CardHeader>
@@ -148,7 +142,7 @@ export function Component() {
                       className="text-xl md:text-2xl font-black capitalize text-pretty"
                       style={{ color: "#003280" }}
                     >
-                      {formatDate(participant.room.date.toDate())}
+                      {participant.room?.date}
                     </p>
                   </div>
                 </div>
@@ -182,7 +176,7 @@ export function Component() {
                       className="text-xl md:text-2xl font-black"
                       style={{ color: "#003280" }}
                     >
-                      {formatTime(participant.room.date.toDate())}
+                      {participant.room?.interval}
                     </p>
                   </div>
                 </div>

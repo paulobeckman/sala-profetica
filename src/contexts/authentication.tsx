@@ -8,9 +8,6 @@ import {
 import { onAuthStateChanged, signInAnonymously, signOut } from "firebase/auth";
 
 import auth from "@/services/firebase/auth";
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
-import firestore from "@/services/firebase/firestore";
-import type { ParticipantType } from "@/interface/paticipant";
 
 type ProviderProps = {
   children: React.ReactNode;
@@ -65,32 +62,18 @@ export const AuthProvider = ({ children }: ProviderProps) => {
   const SignIn = useCallback(
     async ({ registrationCode }: SignInCredentials): Promise<boolean> => {
       setLoadingUserAuth(true);
-      const collectionRef = collection(firestore, "participant");
-      const queryUser = query(
-        collectionRef,
-        where("registrationCode", "==", registrationCode),
-        limit(1)
-      );
-      const querySnapshot = await getDocs(queryUser);
-      const participantData = querySnapshot?.docs[0]?.data() as
-        | ParticipantType
-        | undefined;
-      if (participantData?.registrationCode) {
-        localStorage.setItem(
-          "@registrationCode",
-          participantData.registrationCode
-        );
+      localStorage.setItem("@registrationCode", registrationCode);
 
-        const response = await signInAnonymously(auth);
-        if (response.user) {
-          const { displayName, uid } = response.user;
-          setUser({
-            id: uid,
-            name: displayName,
-            registrationCode: participantData.registrationCode,
-          });
-          return true;
-        }
+      const response = await signInAnonymously(auth);
+      if (response.user) {
+        const { displayName, uid } = response.user;
+        setUser({
+          id: uid,
+          name: displayName,
+          registrationCode: registrationCode,
+        });
+        setLoadingUserAuth(false);
+        return true;
       }
       setLoadingUserAuth(false);
       return false;
