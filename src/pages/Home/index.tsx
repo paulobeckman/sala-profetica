@@ -323,8 +323,8 @@ export function Component() {
 
               <p className="text-xl md:text-2xl text-white/80 font-light text-pretty max-w-lg mx-auto">
                 Digite o seu código de inscrição, que está no seu comprovante de
-                inscrição, e em seguida selecione um dos horários disponíveis
-                para a Sala Profética.
+                inscrição, em seguida selecione um dos horários disponíveis para
+                a Sala Profética.
               </p>
             </div>
           </div>
