@@ -259,7 +259,7 @@ export function Component() {
             <div className="max-w-2xl mx-auto mb-18">
               <Link to="/programacao">
                 <div className="relative group cursor-pointer">
-                  <div className="absolute inset-0 bg-linear-to-r from-[#E1FF2F] via-[#00FFFF] to-[#E1FF2F] rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#E1FF2F] via-[#00FFFF] to-[#E1FF2F] rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-500" />
                   <div
                     className="relative flex items-center justify-between p-4 md:p-5 rounded-2xl backdrop-blur-xl transition-all duration-300 group-hover:scale-[1.02] border border-[#E1FF2F]/30"
                     style={{ backgroundColor: "rgba(225, 255, 47, 0.1)" }}
@@ -292,7 +292,7 @@ export function Component() {
 
             <div className="text-center mb-5 sm:mb-8 space-y-3 -mt-3 sm:-mt-5">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-balance tracking-tight leading-none">
-                <span className="bg-linear-to-tr from-[#FFFFFF] to-[#E1FF2F] bg-clip-text text-transparent animate-gradient">
+                <span className="bg-gradient-to-tr from-[#FFFFFF] to-[#E1FF2F] bg-clip-text text-transparent animate-gradient">
                   SALA
                 </span>
                 <br />
@@ -309,7 +309,7 @@ export function Component() {
           {/* Formulário de entrada */}
           {selectTime ? (
             <Card className="shadow-2xl border-0 backdrop-blur-xl bg-white/5 overflow-hidden animate-scale-in">
-              <div className="absolute inset-0 bg-linear-to-br from-[#E1FF2F]/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#E1FF2F]/10 to-transparent" />
 
               <div className="relative">
                 <CardHeader className="pb-8">
@@ -330,7 +330,7 @@ export function Component() {
                           <h3 className="text-2xl md:text-3xl font-black text-[#E1FF2F] uppercase tracking-wider">
                             {dayKey}
                           </h3>
-                          <div className="h-1 w-20 bg-linear-to-r from-[#E1FF2F] to-transparent mt-2 rounded-full" />
+                          <div className="h-1 w-20 bg-gradient-to-r from-[#E1FF2F] to-transparent mt-2 rounded-full" />
                         </div>
 
                         {/* Time slots grid for this day */}
@@ -427,7 +427,7 @@ export function Component() {
                       }}
                       disabled={!selectedTimeSlot || loading}
                     >
-                      <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
                       <span className="relative z-10 flex items-center justify-center gap-2">
                         {loading || loadingUserAuth ? (
                           <>
@@ -449,7 +449,7 @@ export function Component() {
           ) : (
             <Card className="shadow-2xl border-0 backdrop-blur-xl bg-white/5 overflow-hidden group hover:bg-white/10 transition-all duration-500">
               {/* Borda animada */}
-              <div className="absolute inset-0 rounded-lg bg-linear-to-r from-[#E1FF2F] via-[#00FFFF] to-[#E1FF2F] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500" />
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#E1FF2F] via-[#00FFFF] to-[#E1FF2F] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500" />
 
               <div className="relative">
                 <CardHeader className="space-y-1 pb-6">
@@ -599,7 +599,7 @@ export function Component() {
                       }
                     >
                       {/* Efeito de brilho ao hover */}
-                      <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
 
                       <span className="relative z-10 flex items-center justify-center gap-2">
                         {loadingUserAuth || loading ? (

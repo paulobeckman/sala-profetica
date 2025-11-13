@@ -54,7 +54,7 @@ export function Component() {
 
           <div className="text-center mb-6 sm:mb-8 space-y-3 -mt-3 sm:-mt-5">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-balance tracking-tight leading-none">
-              <span className="bg-linear-to-tr from-[#FFFFFF] to-[#E1FF2F] bg-clip-text text-transparent animate-gradient">
+              <span className="bg-gradient-to-tr from-[#FFFFFF] to-[#E1FF2F] bg-clip-text text-transparent animate-gradient">
                 SALA
               </span>
               <br />
@@ -65,7 +65,7 @@ export function Component() {
 
         {/* Card de resultado com animação de entrada */}
         <Card className="shadow-2xl border-0 backdrop-blur-xl bg-white/5 overflow-hidden animate-scale-in">
-          <div className="absolute inset-0 bg-linear-to-br from-[#E1FF2F]/10 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#E1FF2F]/10 to-transparent" />
 
           <div className="relative">
             <CardHeader className="text-center pb-6">
@@ -116,7 +116,7 @@ export function Component() {
             <CardContent className="space-y-4 pb-8">
               {/* Data */}
               <div className="relative group/card">
-                <div className="absolute inset-0 bg-linear-to-r from-[#E1FF2F] to-[#B8FF00] rounded-2xl blur-lg opacity-0 group-hover/card:opacity-30 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#E1FF2F] to-[#B8FF00] rounded-2xl blur-lg opacity-0 group-hover/card:opacity-30 transition-opacity duration-300" />
                 <div
                   className="relative flex items-center gap-5 p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 transform group-hover/card:scale-[1.02]"
                   style={{ backgroundColor: "#E1FF2F" }}
@@ -150,7 +150,7 @@ export function Component() {
 
               {/* Horário */}
               <div className="relative group/card">
-                <div className="absolute inset-0 bg-linear-to-r from-[#E1FF2F] to-[#B8FF00] rounded-2xl blur-lg opacity-0 group-hover/card:opacity-30 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#E1FF2F] to-[#B8FF00] rounded-2xl blur-lg opacity-0 group-hover/card:opacity-30 transition-opacity duration-300" />
                 <div
                   className="relative flex items-center gap-5 p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 transform group-hover/card:scale-[1.02]"
                   style={{ backgroundColor: "#E1FF2F" }}
@@ -188,7 +188,7 @@ export function Component() {
         <div className="max-w-2xl mx-auto mt-8 mb-6">
           <Link to="/programacao">
             <div className="relative group cursor-pointer">
-              <div className="absolute inset-0 bg-linear-to-r from-[#E1FF2F] via-[#00FFFF] to-[#E1FF2F] rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#E1FF2F] via-[#00FFFF] to-[#E1FF2F] rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-500" />
               <div
                 className="relative flex items-center justify-between p-4 md:p-5 rounded-2xl backdrop-blur-xl transition-all duration-300 group-hover:scale-[1.02] border border-[#E1FF2F]/30"
                 style={{ backgroundColor: "rgba(225, 255, 47, 0.1)" }}
