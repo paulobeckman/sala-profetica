@@ -425,11 +425,11 @@ export function Component() {
                     </div>
                   )}
 
-                  <div className="flex gap-3 pt-4">
+                  <div className="flex-col-reverse flex md:flex-row gap-5 pt-4">
                     <Button
                       disabled={loading}
                       onClick={() => setSelectTime(false)}
-                      className="flex-1 h-14 text-lg font-black rounded-2xl"
+                      className="flex-1 p-4 h-14 text-md font-black rounded-2xl"
                       style={{
                         background: "rgba(225, 255, 47, 0.1)",
                         color: "#E1FF2F",
@@ -441,7 +441,7 @@ export function Component() {
                     </Button>
                     <Button
                       onClick={handleTimeSlotSelect}
-                      className="flex-1 h-14 text-lg font-black rounded-2xl relative overflow-hidden group/btn"
+                      className="flex-1 p-4 h-14 text-lg font-black rounded-2xl relative overflow-hidden group/btn"
                       style={{
                         background:
                           "linear-gradient(135deg, #E1FF2F 0%, #B8FF00 100%)",
@@ -452,11 +452,11 @@ export function Component() {
                       disabled={!selectedTimeSlot || loading}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
-                      <span className="relative z-10 flex items-center justify-center gap-2">
+                      <span className="text-[16px] relative z-10 flex items-center justify-center gap-2">
                         {loading || loadingUserAuth ? (
                           <>
-                            <div className="w-6 h-6 border-3 border-[#003280] border-t-transparent rounded-full animate-spin" />
-                            Confirmando...
+                            <div className="w-4 h-4 border-3 border-[#003280] border-t-transparent rounded-full animate-spin" />
+                            Confirmando
                           </>
                         ) : (
                           <>
@@ -544,7 +544,7 @@ export function Component() {
                             onKeyDown={(e) => handleKeyDown(index, e)}
                             onFocus={() => handleFocus(index)}
                             onPaste={(e) => handlePaste(e, index)}
-                            className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
+                            className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
                             style={{
                               backgroundColor: code[index]
                                 ? "#E1FF2F"
@@ -582,7 +582,7 @@ export function Component() {
                             onKeyDown={(e) => handleKeyDown(index, e)}
                             onFocus={() => handleFocus(index)}
                             onPaste={(e) => handlePaste(e, index)}
-                            className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
+                            className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
                             style={{
                               backgroundColor: code[index]
                                 ? "#E1FF2F"
@@ -628,11 +628,11 @@ export function Component() {
                       {/* Efeito de brilho ao hover */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
 
-                      <span className="relative z-10 flex items-center justify-center gap-2">
+                      <span className=" text-md relative z-10 flex items-center justify-center gap-2">
                         {loadingUserAuth || loading ? (
                           <>
-                            <div className="w-6 h-6 border-3 border-[#003280] border-t-transparent rounded-full animate-spin" />
-                            Consultando...
+                            <div className="w-4 h-4 border-3 border-[#003280] border-t-transparent rounded-full animate-spin" />
+                            Consultando
                           </>
                         ) : (
                           <>
