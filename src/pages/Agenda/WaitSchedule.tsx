@@ -85,7 +85,7 @@ export function WaitSchedule() {
 
             {/* Destacados */}
             <div className="grid grid-cols-2 gap-4 md:gap-6 pt-2">
-              <div className="space-y-2 p-4 rounded-lg bg-[#E1FF2F]/10 border border-[#E1FF2F]/20">
+              <div className="space-y-2 p-4 flex flex-col justify-center items-center rounded-lg bg-[#E1FF2F]/10 border border-[#E1FF2F]/20">
                 <div className="text-2xl md:text-3xl font-black text-[#E1FF2F]">
                   21-22
                 </div>

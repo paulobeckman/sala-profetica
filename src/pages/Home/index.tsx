@@ -9,13 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  AlertCircle,
-  ArrowLeft,
-  CalendarRange,
-  Flame,
-  FlameIcon,
-} from "lucide-react";
+import { AlertCircle, ArrowLeft, CalendarRange, Flame } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -142,6 +136,34 @@ export function Component() {
       toast.error(
         "Ocorreu uma falha, tente novamente em instantes ou procure um de nossos voluntários."
       );
+    }
+  };
+
+  const handlePaste = (
+    e: React.ClipboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData
+      .getData("text")
+      .replace(/[^A-Za-z0-9]/g, "")
+      .toUpperCase();
+
+    if (pastedText.length > 0) {
+      const chars = pastedText.slice(0, 9 - index).split("");
+      const newCode = [...code];
+      chars.forEach((char, i) => {
+        if (index + i < 9) {
+          newCode[index + i] = char;
+        }
+      });
+      setCode(newCode);
+      setError("");
+
+      const nextIndex = Math.min(index + chars.length, 8);
+      setTimeout(() => {
+        inputRefs.current[nextIndex]?.focus();
+      }, 0);
     }
   };
 
@@ -436,7 +458,7 @@ export function Component() {
                           </>
                         ) : (
                           <>
-                            <FlameIcon className="w-5 h-5" />
+                            <Flame className="w-5 h-5" />
                             Confirmar
                           </>
                         )}
@@ -481,6 +503,7 @@ export function Component() {
                             }
                             onKeyDown={(e) => handleKeyDown(index, e)}
                             onFocus={() => handleFocus(index)}
+                            onPaste={(e) => handlePaste(e, index)}
                             className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
                             style={{
                               backgroundColor: code[index]
@@ -518,6 +541,7 @@ export function Component() {
                             }
                             onKeyDown={(e) => handleKeyDown(index, e)}
                             onFocus={() => handleFocus(index)}
+                            onPaste={(e) => handlePaste(e, index)}
                             className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
                             style={{
                               backgroundColor: code[index]
@@ -555,6 +579,7 @@ export function Component() {
                             }
                             onKeyDown={(e) => handleKeyDown(index, e)}
                             onFocus={() => handleFocus(index)}
+                            onPaste={(e) => handlePaste(e, index)}
                             className="w-7 h-10 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl md:text-4xl font-black rounded-md sm:rounded-xl md:rounded-2xl border-2 focus:outline-none focus:ring-4 uppercase transition-all duration-300 transform hover:scale-105 focus:scale-110"
                             style={{
                               backgroundColor: code[index]
