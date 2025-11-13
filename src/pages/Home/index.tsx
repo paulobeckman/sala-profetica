@@ -322,8 +322,9 @@ export function Component() {
               </h1>
 
               <p className="text-xl md:text-2xl text-white/80 font-light text-pretty max-w-lg mx-auto">
-                Escolha seu horário na sala profética inserindo o código do seu
-                comprovante de inscrição abaixo.
+                Digite o seu código de inscrição, que está no seu comprovante de
+                inscrição, e em seguida selecione um dos horários disponíveis
+                para a Sala Profética.
               </p>
             </div>
           </div>
@@ -339,7 +340,8 @@ export function Component() {
                     Selecione seu Horário
                   </CardTitle>
                   <CardDescription className="text-lg text-white/70">
-                    Escolha um dos horários disponíveis para sua sessão
+                    Escolha um dos horários disponíveis abaixo, de sua
+                    preferência.
                   </CardDescription>
                 </CardHeader>
 
