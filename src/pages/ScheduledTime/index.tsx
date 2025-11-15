@@ -96,14 +96,20 @@ export function Component() {
                 Olá,{" "}
                 <span className="font-mono font-bold text-[#E1FF2F]">
                   {(() => {
+                    const capitalize = (s: string) =>
+                      s
+                        ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
+                        : "";
                     const parts = (participant.name || "")
                       .trim()
                       .split(/\s+/)
                       .filter(Boolean);
                     if (!parts.length) return "";
                     return parts.length === 1
-                      ? parts[0]
-                      : `${parts[0]} ${parts[parts.length - 1]}`;
+                      ? capitalize(parts[0])
+                      : `${capitalize(parts[0])} ${capitalize(
+                          parts[parts.length - 1]
+                        )}`;
                   })()}
                 </span>
                 <p>
