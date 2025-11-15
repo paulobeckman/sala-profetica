@@ -110,6 +110,34 @@ export function Component() {
                   abaixo estão a data e o horário de acesso à Sala Profética.
                   Não perca! Desde já, prepare-se em oração para esse momento.
                 </p>
+                <div className="mt-4 relative group/alert overflow-hidden rounded-2xl md:rounded-3xl">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#E1FF2F]/60 via-[#00FFFF]/40 to-[#E1FF2F]/60 animate-gradient" />
+                  <div className="absolute inset-0 opacity-0 group-hover/alert:opacity-30 bg-gradient-to-r from-[#E1FF2F] to-[#00FFFF] blur-2xl transition-opacity duration-500" />
+
+                  <div
+                    className="relative backdrop-blur-xl p-4 rounded-2xl md:rounded-3xl space-y-4 transition-all duration-300 border-2 border-[#E1FF2F]"
+                    style={{ backgroundColor: "rgba(0, 50, 128, 0.6)" }}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex-1">
+                        <p className="text-base md:text-lg text-white font-semibold leading-relaxed">
+                          <span className="text-[#E1FF2F] font-black">
+                            Guarde e apresente
+                          </span>{" "}
+                          esta confirmação de horário no momento de sua{" "}
+                          <span className="text-[#E1FF2F] font-black">
+                            entrada
+                          </span>{" "}
+                          na{" "}
+                          <span className="text-[#E1FF2F] font-black">
+                            Sala Profética
+                          </span>
+                          .
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </CardDescription>
             </CardHeader>
 
