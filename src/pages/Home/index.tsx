@@ -107,6 +107,7 @@ export function Component() {
           date: selectedTimeSlot.date,
           hour: selectedTimeSlot.hour,
           interval: selectedTimeSlot.interval,
+          createdAt: new Date(),
         },
       };
 
