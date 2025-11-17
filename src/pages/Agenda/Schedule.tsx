@@ -110,7 +110,7 @@ export function Schedule() {
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Conteúdo */}
-      <div className="relative z-10 container mx-auto px-4">
+      <div className="relative z-10 container mx-auto px-4 pb-8">
         <div className="max-w-2xl mx-auto mb-18">
           <Link to="/">
             <div className="relative group cursor-pointer">
