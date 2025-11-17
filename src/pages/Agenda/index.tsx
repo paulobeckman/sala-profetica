@@ -1,7 +1,7 @@
-import { WaitSchedule } from "./WaitSchedule";
+import { Schedule } from "./Schedule";
 
 export function Component() {
-  return <WaitSchedule />;
+  return <Schedule />;
 }
 
 Component.displayName = "Agenda";

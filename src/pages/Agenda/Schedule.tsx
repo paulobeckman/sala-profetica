@@ -8,76 +8,82 @@ export function Schedule() {
   const schedule = {
     "21/11": [
       {
-        time: "11:00 - 12:00",
+        time: "12:00 - 14:00",
         title: "Credenciamento",
         location: "Entrada Principal",
         type: "Check-in",
       },
       {
-        time: "13:00 - 17:00",
-        title: "1º Sessão",
+        time: "14:00 - 17:10",
+        title: "Sessão 01",
         location: "Auditório Principal",
         type: "Ministrações",
       },
       {
-        time: "17:00 - 18:20",
+        time: "17:10 - 18:30",
         title: "Sala Profética",
-        location: "Salas 1",
+        location: "",
         type: "Sala Profética",
       },
       {
-        time: "17:00 - 18:20",
-        title: "Intervalo",
-        location: "Praça de Alimentação",
-        type: "Intervalo",
-      },
-      {
-        time: "18:20 - 21:00",
-        title: "2º Sessão",
-        location: "Auditório Principal",
-        type: "Ministrações",
-      },
-    ],
-    "22/11": [
-      {
-        time: "08:00 - 12:00",
-        title: "3º Sessão",
-        location: "Auditório Principal",
-        type: "Ministrações",
-      },
-      {
-        time: "12:20 - 14:20",
-        title: "Sala Profética",
-        location: "Salas 1",
-        type: "Sala Profética",
-      },
-      {
-        time: "12:20 - 14:20",
-        title: "Intervalo",
-        location: "Praça de Alimentação",
-        type: "Intervalo",
-      },
-      {
-        time: "14:00 - 16:50",
-        title: "4º Sessão",
-        location: "Auditório Principal",
-        type: "Ministrações",
-      },
-      {
-        time: "16:50 - 18:30",
-        title: "Sala Profética",
-        location: "Salas 1",
-        type: "Sala Profética",
-      },
-      {
-        time: "16:50 - 18:30",
+        time: "17:10 - 18:30",
         title: "Intervalo",
         location: "Praça de Alimentação",
         type: "Intervalo",
       },
       {
         time: "18:30 - 21:00",
-        title: "5º Sessão",
+        title: "Sessão 02",
+        location: "Auditório Principal",
+        type: "Ministrações",
+      },
+    ],
+    "22/11": [
+      {
+        time: "08:00 - 09:00",
+        title: "Soaking Room | Sala Profética",
+        location: undefined,
+        type: "Sala Profética",
+      },
+      {
+        time: "09:00 - 12:20",
+        title: "Sessão 03",
+        location: "Auditório Principal",
+        type: "Ministrações",
+      },
+      {
+        time: "12:20 - 14:30",
+        title: "Sala Profética",
+        location: undefined,
+        type: "Sala Profética",
+      },
+      {
+        time: "12:20 - 14:30",
+        title: "Intervalo",
+        location: "Praça de Alimentação",
+        type: "Intervalo",
+      },
+      {
+        time: "14:30 - 16:50",
+        title: "Sessão 04",
+        location: "Auditório Principal",
+        type: "Ministrações",
+      },
+      {
+        time: "16:50 - 18:30",
+        title: "Sala Profética",
+        location: undefined,
+        type: "Sala Profética",
+      },
+      {
+        time: "16:50 - 18:30",
+        title: "Intervalo",
+        location: "Praça de Alimentação",
+        type: "Intervalo",
+      },
+      {
+        time: "18:30 - 21:30",
+        title: "Sessão 05",
         location: "Auditório Principal",
         type: "Ministrações",
       },
@@ -215,24 +221,25 @@ export function Schedule() {
                               </Link>
                             </div>
                           )}
+                          {item.location && (
+                            <div className="flex flex-wrap gap-3 md:gap-4">
+                              <div className="flex items-center gap-2 text-white/80">
+                                <MapPin className="w-4 h-4 text-[#E1FF2F]" />
+                                <span className="text-sm md:text-base">
+                                  {item.location}
+                                </span>
+                              </div>
 
-                          <div className="flex flex-wrap gap-3 md:gap-4">
-                            <div className="flex items-center gap-2 text-white/80">
-                              <MapPin className="w-4 h-4 text-[#E1FF2F]" />
-                              <span className="text-sm md:text-base">
-                                {item.location}
-                              </span>
+                              <div
+                                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs md:text-sm font-bold uppercase tracking-wider ${getTypeColor(
+                                  item.type
+                                )}`}
+                              >
+                                <Users className="w-3 h-3" />
+                                {item.type}
+                              </div>
                             </div>
-
-                            <div
-                              className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs md:text-sm font-bold uppercase tracking-wider ${getTypeColor(
-                                item.type
-                              )}`}
-                            >
-                              <Users className="w-3 h-3" />
-                              {item.type}
-                            </div>
-                          </div>
+                          )}
                         </div>
                       </div>
                     </CardContent>
