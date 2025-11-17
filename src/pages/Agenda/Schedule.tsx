@@ -221,25 +221,25 @@ export function Schedule() {
                               </Link>
                             </div>
                           )}
-                          {item.location && (
-                            <div className="flex flex-wrap gap-3 md:gap-4">
+                          <div className="flex flex-wrap gap-3 md:gap-4">
+                            {item.location && (
                               <div className="flex items-center gap-2 text-white/80">
                                 <MapPin className="w-4 h-4 text-[#E1FF2F]" />
                                 <span className="text-sm md:text-base">
                                   {item.location}
                                 </span>
                               </div>
+                            )}
 
-                              <div
-                                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs md:text-sm font-bold uppercase tracking-wider ${getTypeColor(
-                                  item.type
-                                )}`}
-                              >
-                                <Users className="w-3 h-3" />
-                                {item.type}
-                              </div>
+                            <div
+                              className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs md:text-sm font-bold uppercase tracking-wider ${getTypeColor(
+                                item.type
+                              )}`}
+                            >
+                              <Users className="w-3 h-3" />
+                              {item.type}
                             </div>
-                          )}
+                          </div>
                         </div>
                       </div>
                     </CardContent>
