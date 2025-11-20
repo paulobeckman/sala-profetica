@@ -225,9 +225,9 @@ export function Component() {
 
     const fullCode = code.join("");
 
-    if (fullCode.length !== 9 || !/^[A-Za-z0-9]{9}$/.test(fullCode)) {
+    if (fullCode.length < 8) {
       setError(
-        "Por favor, insira um código válido de 9 caracteres (letras e números)"
+        "Por favor, insira um código de inscrição com no mínimo 8 caracteres."
       );
       setLoading(false);
       return;
@@ -482,8 +482,8 @@ export function Component() {
                     Código de Inscrição
                   </CardTitle>
                   <CardDescription className="text-md sm:text-lg text-white">
-                    Digite os 9 caracteres do seu código de inscrição que está
-                    no seu comprovante de inscrição.
+                    Digite o seu código de inscrição que está no seu
+                    comprovante.
                   </CardDescription>
                 </CardHeader>
 
@@ -623,7 +623,7 @@ export function Component() {
                         boxShadow: "0 10px 40px rgba(225, 255, 47, 0.3)",
                       }}
                       disabled={
-                        loadingUserAuth || loading || code.join("").length !== 9
+                        loadingUserAuth || loading || code.join("").length < 8
                       }
                     >
                       {/* Efeito de brilho ao hover */}
