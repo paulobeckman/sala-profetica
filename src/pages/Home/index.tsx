@@ -651,7 +651,7 @@ export function Component() {
 
           <div className="text-center mt-6 space-y-2">
             <p className="text-white/60 text-sm font-medium">
-              Dúvidas? Procure um dos nossos voluntários
+              Dúvidas? Procure a Sala Profética
             </p>
             <div className="flex items-center justify-center gap-2">
               <div className="w-2 h-2 rounded-full bg-[#E1FF2F] animate-pulse" />
