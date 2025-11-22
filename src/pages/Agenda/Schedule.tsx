@@ -161,10 +161,11 @@ export function Schedule() {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <Tabs defaultValue="21/11" className="w-full">
+          <Tabs defaultValue="22/11" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-2 bg-white/10 border border-[#E1FF2F]/30 backdrop-blur-xl rounded-2xl p-2">
               <TabsTrigger
                 value="21/11"
+                disabled
                 className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#E1FF2F] data-[state=active]:to-[#B8FF00] data-[state=active]:text-[#003280] data-[state=active]:shadow-lg text-white/60 hover:text-white transition-all font-bold text-lg"
               >
                 21 de Novembro
